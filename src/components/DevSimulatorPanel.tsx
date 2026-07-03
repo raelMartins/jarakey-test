@@ -2,6 +2,7 @@ import { usePropertyContext } from '../context/PropertyContext';
 
 export function DevSimulatorPanel() {
   const {
+    activeProperty,
     activePropertyId,
     currentRole,
     isDevRoleUpdating,
@@ -31,7 +32,7 @@ export function DevSimulatorPanel() {
       <dl className="mt-3 space-y-1 text-xs text-amber-950">
         <div className="flex justify-between gap-2">
           <dt className="font-medium">Active property</dt>
-          <dd className="truncate font-mono">{activePropertyId ?? 'None'}</dd>
+          <dd className="truncate text-right">{activeProperty?.propertyName ?? 'None'}</dd>
         </div>
         <div className="flex justify-between gap-2">
           <dt className="font-medium">Current role</dt>
