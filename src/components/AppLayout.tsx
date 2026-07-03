@@ -1,6 +1,6 @@
-import { PropertyPickerView } from '../pages/PropertyPickerView';
-import { ActionPageView } from '../pages/ActionPageView';
-import { DevSimulatorPanel } from './DevSimulatorPanel';
+import { PropertyPickerView } from "../pages/PropertyPickerView";
+import { ActionPageView } from "../pages/ActionPageView";
+import { DevSimulatorPanel } from "./DevSimulatorPanel";
 
 export function AppLayout() {
   return (
@@ -14,7 +14,8 @@ export function AppLayout() {
             Property Context Demo
           </h1>
           <p className="mt-1 text-sm text-slate-500">
-            Unified access management — active property context with role drift handling
+            Unified access management | active property context with role drift
+            handling
           </p>
         </div>
       </header>
