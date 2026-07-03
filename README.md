@@ -14,7 +14,7 @@ npm run dev
 
 Open the URL shown in your terminal (typically `http://localhost:5173`).
 
-Or view the live version of the project at `https://jarakey-test.vercel.app/`.
+Or view the live version of the project [here](https://jarakey-test.vercel.app/).
 
 ## Testing
 
