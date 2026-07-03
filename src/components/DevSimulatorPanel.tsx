@@ -1,8 +1,16 @@
-import { usePropertyContext } from "../context/PropertyContext";
+import { usePropertyContext } from '../context/PropertyContext';
 
 export function DevSimulatorPanel() {
-  const { activePropertyId, currentRole, isDowngrading, downgradeRole } =
-    usePropertyContext();
+  const {
+    activePropertyId,
+    currentRole,
+    isDevRoleUpdating,
+    downgradeRole,
+    upgradeRole,
+  } = usePropertyContext();
+
+  const canDowngrade = currentRole === 'Manager';
+  const canUpgrade = currentRole === 'Tenant';
 
   return (
     <aside
@@ -17,29 +25,39 @@ export function DevSimulatorPanel() {
       </div>
 
       <p className="mt-2 text-xs leading-relaxed text-amber-900/80">
-        Simulate mid-session role drift by downgrading the active property to
-        Tenant.
+        Simulate mid-session role changes for the active property.
       </p>
 
       <dl className="mt-3 space-y-1 text-xs text-amber-950">
         <div className="flex justify-between gap-2">
           <dt className="font-medium">Active property</dt>
-          <dd className="truncate font-mono">{activePropertyId ?? "None"}</dd>
+          <dd className="truncate font-mono">{activePropertyId ?? 'None'}</dd>
         </div>
         <div className="flex justify-between gap-2">
           <dt className="font-medium">Current role</dt>
-          <dd>{currentRole ?? "--"}</dd>
+          <dd>{currentRole ?? '—'}</dd>
         </div>
       </dl>
 
-      <button
-        type="button"
-        disabled={!activePropertyId || isDowngrading}
-        onClick={() => void downgradeRole()}
-        className="mt-4 w-full rounded-lg border border-amber-500 bg-amber-400 px-4 py-2.5 text-sm font-semibold text-amber-950 shadow-sm transition-all duration-200 hover:bg-amber-500 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50"
-      >
-        {isDowngrading ? "Downgrading…" : "POST /dev/downgrade"}
-      </button>
+      <div className="mt-4 flex gap-2">
+        <button
+          type="button"
+          disabled={!activePropertyId || !canDowngrade || isDevRoleUpdating}
+          onClick={() => void downgradeRole()}
+          className="flex-1 rounded-lg border border-amber-500 bg-amber-400 px-4 py-2.5 text-sm font-semibold text-amber-950 shadow-sm transition-all duration-200 hover:bg-amber-500 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          {isDevRoleUpdating && canDowngrade ? 'Updating…' : 'Downgrade'}
+        </button>
+
+        <button
+          type="button"
+          disabled={!activePropertyId || !canUpgrade || isDevRoleUpdating}
+          onClick={() => void upgradeRole()}
+          className="flex-1 rounded-lg border border-amber-500 bg-amber-400 px-4 py-2.5 text-sm font-semibold text-amber-950 shadow-sm transition-all duration-200 hover:bg-amber-500 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          {isDevRoleUpdating && canUpgrade ? 'Updating…' : 'Upgrade'}
+        </button>
+      </div>
     </aside>
   );
 }

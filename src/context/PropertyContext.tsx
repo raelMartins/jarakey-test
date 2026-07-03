@@ -26,7 +26,7 @@ interface PropertyContextValue {
   isLoadingProperties: boolean;
   isLoadingRole: boolean;
   isActionLoading: boolean;
-  isDowngrading: boolean;
+  isDevRoleUpdating: boolean;
   propertiesError: string | null;
   roleError: string | null;
   loadProperties: (page?: number) => Promise<void>;
@@ -34,6 +34,7 @@ interface PropertyContextValue {
   clearActiveProperty: () => void;
   performAction: () => Promise<boolean>;
   downgradeRole: () => Promise<void>;
+  upgradeRole: () => Promise<void>;
 }
 
 const DEFAULT_PAGINATION: PaginationMeta = {
@@ -61,7 +62,7 @@ export function PropertyProvider({
   const [isLoadingProperties, setIsLoadingProperties] = useState(false);
   const [isLoadingRole, setIsLoadingRole] = useState(false);
   const [isActionLoading, setIsActionLoading] = useState(false);
-  const [isDowngrading, setIsDowngrading] = useState(false);
+  const [isDevRoleUpdating, setIsDevRoleUpdating] = useState(false);
 
   const [propertiesError, setPropertiesError] = useState<string | null>(null);
   const [roleError, setRoleError] = useState<string | null>(null);
@@ -88,10 +89,13 @@ export function PropertyProvider({
   }, [client, showToast]);
 
   const setActivePropertyId = useCallback((propertyId: string) => {
-    setActivePropertyIdState(propertyId);
+    if (activePropertyId === propertyId) {
+      return;
+    }
     setCurrentRole(null);
     setRoleError(null);
-  }, []);
+    setActivePropertyIdState(propertyId);
+  }, [activePropertyId]);
 
   const clearActiveProperty = useCallback(() => {
     setActivePropertyIdState(null);
@@ -173,7 +177,7 @@ export function PropertyProvider({
       return;
     }
 
-    setIsDowngrading(true);
+    setIsDevRoleUpdating(true);
 
     try {
       const { role } = await client.downgradeRole(activePropertyId);
@@ -183,7 +187,27 @@ export function PropertyProvider({
       const message = error instanceof Error ? error.message : 'Downgrade failed';
       showToast(message, 'error');
     } finally {
-      setIsDowngrading(false);
+      setIsDevRoleUpdating(false);
+    }
+  }, [activePropertyId, client, showToast]);
+
+  const upgradeRole = useCallback(async (): Promise<void> => {
+    if (!activePropertyId) {
+      showToast('Select a property before simulating role change.', 'error');
+      return;
+    }
+
+    setIsDevRoleUpdating(true);
+
+    try {
+      const { role } = await client.upgradeRole(activePropertyId);
+      setCurrentRole(role);
+      showToast('Dev: role upgraded to Manager for the active property.', 'success');
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Upgrade failed';
+      showToast(message, 'error');
+    } finally {
+      setIsDevRoleUpdating(false);
     }
   }, [activePropertyId, client, showToast]);
 
@@ -196,7 +220,7 @@ export function PropertyProvider({
       isLoadingProperties,
       isLoadingRole,
       isActionLoading,
-      isDowngrading,
+      isDevRoleUpdating,
       propertiesError,
       roleError,
       loadProperties,
@@ -204,6 +228,7 @@ export function PropertyProvider({
       clearActiveProperty,
       performAction,
       downgradeRole,
+      upgradeRole,
     }),
     [
       properties,
@@ -213,7 +238,7 @@ export function PropertyProvider({
       isLoadingProperties,
       isLoadingRole,
       isActionLoading,
-      isDowngrading,
+      isDevRoleUpdating,
       propertiesError,
       roleError,
       loadProperties,
@@ -221,6 +246,7 @@ export function PropertyProvider({
       clearActiveProperty,
       performAction,
       downgradeRole,
+      upgradeRole,
     ],
   );
 

@@ -131,6 +131,24 @@ export function createApiClient(options: ApiClientOptions = {}) {
 
       return transformDowngradeResponse(wire);
     },
+
+    async upgradeRole(propertyId: string | undefined): Promise<PropertyRole> {
+      if (!propertyId) {
+        throw new ApiError(400, 'X-Property-ID header is required');
+      }
+
+      const url = `${MOCK_API_BASE}/dev/upgrade`;
+
+      const wire = await withDelay(async () => {
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: buildHeaders(propertyId),
+        });
+        return parseResponse<WireDowngradeResponse>(response);
+      });
+
+      return transformDowngradeResponse(wire);
+    },
   };
 }
 

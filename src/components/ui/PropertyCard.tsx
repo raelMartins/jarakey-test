@@ -42,8 +42,9 @@ export function PropertyCard({ property, onSelect, isActive = false, role }: Pro
 
       <button
         type="button"
+        disabled={isActive}
         onClick={() => onSelect(property.propertyId)}
-        className="mt-4 w-full rounded-lg bg-emerald-700 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:bg-emerald-800 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2 sm:w-auto"
+        className="mt-4 w-full rounded-lg bg-emerald-700 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:bg-emerald-800 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2 disabled:cursor-default disabled:bg-emerald-800/80 disabled:hover:bg-emerald-800/80 disabled:hover:shadow-sm sm:w-auto"
       >
         {isActive ? 'Selected' : 'Select property'}
       </button>

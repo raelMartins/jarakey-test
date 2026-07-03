@@ -53,6 +53,11 @@ export function downgradePropertyRole(propertyId: string): Role {
   return 'Tenant';
 }
 
+export function upgradePropertyRole(propertyId: string): Role {
+  roleOverrides.set(propertyId, 'Manager');
+  return 'Manager';
+}
+
 export function resetMockDb(): void {
   roleOverrides.clear();
 }

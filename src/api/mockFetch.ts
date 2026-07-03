@@ -1,5 +1,6 @@
 import {
   downgradePropertyRole,
+  upgradePropertyRole,
   getAllProperties,
   getPropertyById,
   getRoleForProperty,
@@ -119,6 +120,24 @@ export async function handleMockFetch(
     const body: WireDowngradeResponse = {
       property_id: propertyId,
       role: 'Tenant',
+    };
+    return jsonResponse(body);
+  }
+
+  if (method === 'POST' && url.pathname === '/dev/upgrade') {
+    if (!propertyId) {
+      return errorResponse('X-Property-ID header is required', 400);
+    }
+
+    const property = getPropertyById(propertyId);
+    if (!property) {
+      return errorResponse(`Property ${propertyId} not found`, 404);
+    }
+
+    upgradePropertyRole(propertyId);
+    const body: WireDowngradeResponse = {
+      property_id: propertyId,
+      role: 'Manager',
     };
     return jsonResponse(body);
   }
