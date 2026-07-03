@@ -1,15 +1,10 @@
 import {
-  downgradePropertyRole,
-  getAllProperties,
-  getPropertyById,
-  getRoleForProperty,
-} from './mockDb';
-import {
   transformActionResponse,
   transformDowngradeResponse,
   transformPaginatedProperties,
   transformPropertyRole,
 } from './transform';
+import { MOCK_API_BASE } from './mockFetch';
 import type { PaginatedProperties } from '../types/property';
 import type { PropertyRole } from '../types/role';
 import type {
@@ -36,24 +31,22 @@ function simulateDelay(ms = DEFAULT_DELAY_MS): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-function requirePropertyId(propertyId: string | undefined): string {
-  if (!propertyId) {
-    throw new ApiError(400, 'X-Property-ID header is required');
+function buildHeaders(propertyId?: string): Headers {
+  const headers = new Headers({ 'Content-Type': 'application/json' });
+  if (propertyId) {
+    headers.set('X-Property-ID', propertyId);
   }
-  return propertyId;
+  return headers;
 }
 
-function paginateProperties(page: number, perPage: number): WirePaginatedProperties {
-  const all = getAllProperties();
-  const start = (page - 1) * perPage;
-  const properties = all.slice(start, start + perPage);
+async function parseResponse<T>(response: Response): Promise<T> {
+  const body = (await response.json()) as T & { error?: string };
 
-  return {
-    properties,
-    page,
-    per_page: perPage,
-    total_count: all.length,
-  };
+  if (!response.ok) {
+    throw new ApiError(response.status, body.error ?? response.statusText);
+  }
+
+  return body;
 }
 
 export interface GetPropertiesParams {
@@ -68,8 +61,10 @@ export interface ApiClientOptions {
 export function createApiClient(options: ApiClientOptions = {}) {
   const delayMs = options.delayMs ?? DEFAULT_DELAY_MS;
 
-  async function withDelay<T>(fn: () => T): Promise<T> {
-    await simulateDelay(delayMs);
+  async function withDelay<T>(fn: () => Promise<T>): Promise<T> {
+    if (delayMs > 0) {
+      await simulateDelay(delayMs);
+    }
     return fn();
   }
 
@@ -77,56 +72,63 @@ export function createApiClient(options: ApiClientOptions = {}) {
     async getProperties(params: GetPropertiesParams = {}): Promise<PaginatedProperties> {
       const page = params.page ?? 1;
       const perPage = params.perPage ?? DEFAULT_PAGE_SIZE;
-      const wire = await withDelay(() => paginateProperties(page, perPage));
+      const url = `${MOCK_API_BASE}/properties?page=${page}&per_page=${perPage}`;
+
+      const wire = await withDelay(async () => {
+        const response = await fetch(url, { method: 'GET', headers: buildHeaders() });
+        return parseResponse<WirePaginatedProperties>(response);
+      });
+
       return transformPaginatedProperties(wire);
     },
 
     async getPropertyRole(propertyId: string): Promise<PropertyRole> {
-      const wire = await withDelay((): WirePropertyRole => {
-        const property = getPropertyById(propertyId);
-        if (!property) {
-          throw new ApiError(404, `Property ${propertyId} not found`);
-        }
-        return {
-          property_id: propertyId,
-          role: getRoleForProperty(propertyId),
-        };
+      const url = `${MOCK_API_BASE}/properties/${propertyId}/role`;
+
+      const wire = await withDelay(async () => {
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: buildHeaders(propertyId),
+        });
+        return parseResponse<WirePropertyRole>(response);
       });
+
       return transformPropertyRole(wire);
     },
 
     async performAction(propertyId: string | undefined): Promise<{ message: string }> {
-      const id = requirePropertyId(propertyId);
-      const wire = await withDelay((): WireActionResponse => {
-        const property = getPropertyById(id);
-        if (!property) {
-          throw new ApiError(404, `Property ${id} not found`);
-        }
+      if (!propertyId) {
+        throw new ApiError(400, 'X-Property-ID header is required');
+      }
 
-        const role = getRoleForProperty(id);
-        if (role !== 'Manager') {
-          throw new ApiError(403, 'Forbidden: Manager role required');
-        }
+      const url = `${MOCK_API_BASE}/action`;
 
-        return { message: 'Action completed successfully' };
+      const wire = await withDelay(async () => {
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: buildHeaders(propertyId),
+        });
+        return parseResponse<WireActionResponse>(response);
       });
+
       return transformActionResponse(wire);
     },
 
     async downgradeRole(propertyId: string | undefined): Promise<PropertyRole> {
-      const id = requirePropertyId(propertyId);
-      const wire = await withDelay((): WireDowngradeResponse => {
-        const property = getPropertyById(id);
-        if (!property) {
-          throw new ApiError(404, `Property ${id} not found`);
-        }
+      if (!propertyId) {
+        throw new ApiError(400, 'X-Property-ID header is required');
+      }
 
-        downgradePropertyRole(id);
-        return {
-          property_id: id,
-          role: 'Tenant',
-        };
+      const url = `${MOCK_API_BASE}/dev/downgrade`;
+
+      const wire = await withDelay(async () => {
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: buildHeaders(propertyId),
+        });
+        return parseResponse<WireDowngradeResponse>(response);
       });
+
       return transformDowngradeResponse(wire);
     },
   };
@@ -134,5 +136,4 @@ export function createApiClient(options: ApiClientOptions = {}) {
 
 export type ApiClient = ReturnType<typeof createApiClient>;
 
-/** Default singleton for app use. Tests can call createApiClient() or resetMockDb(). */
 export const apiClient = createApiClient();

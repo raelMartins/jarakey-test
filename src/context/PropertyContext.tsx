@@ -7,7 +7,7 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import { ApiError, apiClient } from '../api/client';
+import { ApiError, apiClient, type ApiClient } from '../api/client';
 import type { Property } from '../types/property';
 import type { Role } from '../types/role';
 import { useToast } from './ToastContext';
@@ -44,7 +44,13 @@ const DEFAULT_PAGINATION: PaginationMeta = {
 
 const PropertyContext = createContext<PropertyContextValue | null>(null);
 
-export function PropertyProvider({ children }: { children: ReactNode }) {
+export function PropertyProvider({
+  children,
+  client = apiClient,
+}: {
+  children: ReactNode;
+  client?: ApiClient;
+}) {
   const { showToast } = useToast();
 
   const [properties, setProperties] = useState<Property[]>([]);
@@ -65,7 +71,7 @@ export function PropertyProvider({ children }: { children: ReactNode }) {
     setPropertiesError(null);
 
     try {
-      const result = await apiClient.getProperties({ page });
+      const result = await client.getProperties({ page });
       setProperties(result.properties);
       setPagination({
         page: result.page,
@@ -79,7 +85,7 @@ export function PropertyProvider({ children }: { children: ReactNode }) {
     } finally {
       setIsLoadingProperties(false);
     }
-  }, [showToast]);
+  }, [client, showToast]);
 
   const setActivePropertyId = useCallback((propertyId: string) => {
     setActivePropertyIdState(propertyId);
@@ -106,7 +112,7 @@ export function PropertyProvider({ children }: { children: ReactNode }) {
       setRoleError(null);
 
       try {
-        const { role } = await apiClient.getPropertyRole(activePropertyId!);
+        const { role } = await client.getPropertyRole(activePropertyId!);
         if (!cancelled) {
           setCurrentRole(role);
         }
@@ -129,7 +135,7 @@ export function PropertyProvider({ children }: { children: ReactNode }) {
     return () => {
       cancelled = true;
     };
-  }, [activePropertyId, showToast]);
+  }, [activePropertyId, client, showToast]);
 
   const performAction = useCallback(async (): Promise<boolean> => {
     if (!activePropertyId) {
@@ -140,7 +146,7 @@ export function PropertyProvider({ children }: { children: ReactNode }) {
     setIsActionLoading(true);
 
     try {
-      const result = await apiClient.performAction(activePropertyId);
+      const result = await client.performAction(activePropertyId);
       showToast(result.message, 'success');
       return true;
     } catch (error) {
@@ -159,7 +165,7 @@ export function PropertyProvider({ children }: { children: ReactNode }) {
     } finally {
       setIsActionLoading(false);
     }
-  }, [activePropertyId, showToast]);
+  }, [activePropertyId, client, showToast]);
 
   const downgradeRole = useCallback(async (): Promise<void> => {
     if (!activePropertyId) {
@@ -170,7 +176,7 @@ export function PropertyProvider({ children }: { children: ReactNode }) {
     setIsDowngrading(true);
 
     try {
-      const { role } = await apiClient.downgradeRole(activePropertyId);
+      const { role } = await client.downgradeRole(activePropertyId);
       setCurrentRole(role);
       showToast('Dev: role downgraded to Tenant for the active property.', 'error');
     } catch (error) {
@@ -179,7 +185,7 @@ export function PropertyProvider({ children }: { children: ReactNode }) {
     } finally {
       setIsDowngrading(false);
     }
-  }, [activePropertyId, showToast]);
+  }, [activePropertyId, client, showToast]);
 
   const value = useMemo<PropertyContextValue>(
     () => ({
