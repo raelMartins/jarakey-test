@@ -1,5 +1,5 @@
 import { usePropertyContext } from '../context/PropertyContext';
-import { RoleBadge } from '../components/ui/PropertyMedia';
+import { RoleBadge, PropertyImage } from '../components/ui/PropertyMedia';
 import { EmptyState } from '../components/ui';
 
 export function ActionPageView() {
@@ -30,10 +30,9 @@ export function ActionPageView() {
       className="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-lg shadow-slate-200/50"
     >
       <div className="relative aspect-[16/10] bg-slate-100">
-        <img
+        <PropertyImage
           src={activeProperty.imageUrl}
           alt={activeProperty.propertyName}
-          className="h-full w-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent" />
         <div className="absolute bottom-0 left-0 right-0 p-5">

@@ -1,4 +1,6 @@
+import { useEffect, useState } from 'react';
 import type { Role } from '../../types/role';
+import { PROPERTY_IMAGE_PLACEHOLDER } from '../../constants/propertyImage';
 
 const roleBadgeStyles: Record<Role, string> = {
   Manager: 'bg-emerald-500/90 text-white',
@@ -43,11 +45,24 @@ interface PropertyImageProps {
 }
 
 export function PropertyImage({ src, alt, className = '' }: PropertyImageProps) {
+  const [imageSrc, setImageSrc] = useState(src);
+
+  useEffect(() => {
+    setImageSrc(src);
+  }, [src]);
+
+  function handleError() {
+    setImageSrc((current) =>
+      current === PROPERTY_IMAGE_PLACEHOLDER ? current : PROPERTY_IMAGE_PLACEHOLDER,
+    );
+  }
+
   return (
     <img
-      src={src}
+      src={imageSrc}
       alt={alt}
       loading="lazy"
+      onError={handleError}
       className={`h-full w-full object-cover ${className}`}
     />
   );

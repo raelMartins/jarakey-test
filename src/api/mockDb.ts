@@ -23,14 +23,14 @@ const SEED_PROPERTIES: WireProperty[] = [
   { property_id: 'prop-005', property_name: 'Lakefront Towers', address_line_1: '220 Lake Shore Dr', city: 'Chicago', image_url: img('photo-1486406146926-c627a92ad1ab') },
   { property_id: 'prop-006', property_name: 'Cedar Park Homes', address_line_1: '9 Cedar Lane', city: 'Seattle', image_url: img('photo-1600596542815-ffad4c1539a9') },
   { property_id: 'prop-007', property_name: 'Metro Plaza', address_line_1: '101 Main St', city: 'Boston', image_url: img('photo-1600607687939-ce8a6c25118c') },
-  { property_id: 'prop-008', property_name: 'Willow Creek Estates', address_line_1: '55 Willow Way', city: 'Nashville', image_url: img('photo-1605276374104-de6862b9687e') },
-  { property_id: 'prop-009', property_name: 'Sunset Villas', address_line_1: '300 Sunset Blvd', city: 'Los Angeles', image_url: img('photo-1613490495252-f75c85626206') },
-  { property_id: 'prop-010', property_name: 'Greenfield Manor', address_line_1: '77 Greenfield Rd', city: 'Charlotte', image_url: img('photo-1600047509808-ba389f10d9ba') },
-  { property_id: 'prop-011', property_name: 'Pine Ridge Apartments', address_line_1: '14 Pine Ridge Ct', city: 'Phoenix', image_url: img('photo-1570129477492-bbff7619f3d4') },
-  { property_id: 'prop-012', property_name: 'Brookside Lofts', address_line_1: '62 Brookside Ave', city: 'Minneapolis', image_url: img('photo-1600585154340-be6161da2287') },
+  { property_id: 'prop-008', property_name: 'Willow Creek Estates', address_line_1: '55 Willow Way', city: 'Nashville', image_url: img('photo-1523217582562-09d0def885a7') },
+  { property_id: 'prop-009', property_name: 'Sunset Villas', address_line_1: '300 Sunset Blvd', city: 'Los Angeles', image_url: img('photo-1493809842364-78817add7ffb') },
+  { property_id: 'prop-010', property_name: 'Greenfield Manor', address_line_1: '77 Greenfield Rd', city: 'Charlotte', image_url: img('photo-1479832630368-f39319181040') },
+  { property_id: 'prop-011', property_name: 'Pine Ridge Apartments', address_line_1: '14 Pine Ridge Ct', city: 'Phoenix', image_url: img('photo-1449844908440-88298744295a') },
+  { property_id: 'prop-012', property_name: 'Brookside Lofts', address_line_1: '62 Brookside Ave', city: 'Minneapolis', image_url: img('photo-1460317442537-6770e437f67') },
   { property_id: 'prop-013', property_name: 'Highland Gardens', address_line_1: '18 Highland Park', city: 'Atlanta', image_url: img('photo-1560518883-ce09059eeffa') },
   { property_id: 'prop-014', property_name: 'Bayfront Suites', address_line_1: '501 Bayfront Pkwy', city: 'Tampa', image_url: img('photo-1502672260266-1c1ef2d93688') },
-  { property_id: 'prop-015', property_name: 'Elm Street Flats', address_line_1: '33 Elm Street', city: 'Philadelphia', image_url: img('photo-1430150233278-e55c04815d67') },
+  { property_id: 'prop-015', property_name: 'Elm Street Flats', address_line_1: '33 Elm Street', city: 'Philadelphia', image_url: img('photo-1558034167-d709a9369b45') },
 ];
 
 /** In-memory role overrides (e.g. after /dev/downgrade). Keyed by property_id. */
