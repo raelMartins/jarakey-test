@@ -6,6 +6,7 @@ export interface WireProperty {
   property_name: string;
   address_line_1: string;
   city: string;
+  image_url: string;
 }
 
 export interface WirePaginatedProperties {

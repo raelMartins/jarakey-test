@@ -1,32 +1,35 @@
-import { PropertyPickerView } from "../pages/PropertyPickerView";
-import { ActionPageView } from "../pages/ActionPageView";
-import { DevSimulatorPanel } from "./DevSimulatorPanel";
+import { PropertyPickerView } from '../pages/PropertyPickerView';
+import { ActionPageView } from '../pages/ActionPageView';
+import { DevSimulatorPanel } from './DevSimulatorPanel';
 
 export function AppLayout() {
   return (
-    <div className="min-h-screen bg-slate-100">
-      <header className="border-b border-slate-200 bg-white shadow-sm">
-        <div className="mx-auto max-w-6xl px-4 py-5 sm:px-6">
-          <p className="text-xs font-semibold uppercase tracking-widest text-emerald-700">
-            Jarakey
-          </p>
-          <h1 className="mt-1 text-xl font-bold text-slate-900">
-            Property Context Demo
-          </h1>
-          <p className="mt-1 text-sm text-slate-500">
-            Unified access management | active property context with role drift
-            handling
+    <div className="min-h-screen bg-gradient-to-b from-slate-100 to-slate-50">
+      <header className="border-b border-slate-200/80 bg-white/80 backdrop-blur-md">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6">
+          <div>
+            <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-emerald-700">
+              Jarakey
+            </p>
+            <h1 className="text-lg font-bold text-slate-900 sm:text-xl">
+              Property Context
+            </h1>
+          </div>
+          <p className="hidden max-w-xs text-right text-xs text-slate-500 sm:block">
+            Select a property to manage access and actions
           </p>
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-        <div className="grid gap-8 lg:grid-cols-5">
-          <div className="lg:col-span-3">
+      <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:py-8">
+        <div className="grid gap-6 lg:grid-cols-12 lg:gap-8">
+          <div className="lg:col-span-7">
             <PropertyPickerView />
           </div>
-          <div className="lg:col-span-2">
-            <ActionPageView />
+          <div className="lg:col-span-5">
+            <div className="lg:sticky lg:top-6">
+              <ActionPageView />
+            </div>
           </div>
         </div>
       </main>

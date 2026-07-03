@@ -14,6 +14,7 @@ function transformProperty(wire: WireProperty): Property {
     propertyName: wire.property_name,
     addressLine1: wire.address_line_1,
     city: wire.city,
+    imageUrl: wire.image_url,
   };
 }
 

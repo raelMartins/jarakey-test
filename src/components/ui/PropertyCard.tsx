@@ -1,53 +1,56 @@
 import type { Property } from '../../types/property';
 import type { Role } from '../../types/role';
+import { CheckmarkIcon, PropertyImage, RoleBadge } from './PropertyMedia';
 
 interface PropertyCardProps {
   property: Property;
-  onSelect: (propertyId: string) => void;
+  onSelect: (property: Property) => void;
   isActive?: boolean;
   role?: Role | null;
 }
 
-const roleBadgeStyles: Record<Role, string> = {
-  Manager: 'bg-emerald-100 text-emerald-800',
-  Tenant: 'bg-slate-100 text-slate-600',
-};
-
 export function PropertyCard({ property, onSelect, isActive = false, role }: PropertyCardProps) {
   return (
-    <article
-      className={`group rounded-xl border bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-emerald-300 hover:shadow-md ${
+    <button
+      type="button"
+      aria-pressed={isActive}
+      aria-label={`Select ${property.propertyName}`}
+      onClick={() => onSelect(property)}
+      className={`group relative w-full overflow-hidden rounded-2xl border bg-white text-left shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 ${
         isActive
-          ? 'border-emerald-500 ring-2 ring-emerald-500/20 shadow-md'
-          : 'border-slate-200'
+          ? 'border-emerald-500 shadow-lg shadow-emerald-500/10 ring-2 ring-emerald-500/30'
+          : 'border-slate-200/80 hover:border-emerald-300'
       }`}
     >
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0 flex-1">
-          <h3 className="truncate text-base font-semibold text-slate-900 group-hover:text-emerald-900">
-            {property.propertyName}
-          </h3>
-          <p className="mt-1 text-sm text-slate-600">{property.addressLine1}</p>
-          <p className="mt-0.5 text-sm text-slate-400">{property.city}</p>
-        </div>
+      <div className="relative aspect-[16/10] overflow-hidden bg-slate-100">
+        <PropertyImage
+          src={property.imageUrl}
+          alt={property.propertyName}
+          className="transition-transform duration-300 group-hover:scale-105"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/50 via-transparent to-transparent" />
+
+        {isActive && (
+          <span className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-emerald-500 text-white shadow-md">
+            <CheckmarkIcon />
+          </span>
+        )}
 
         {role && (
-          <span
-            className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-medium ${roleBadgeStyles[role]}`}
-          >
-            {role}
-          </span>
+          <div className="absolute bottom-2 left-2">
+            <RoleBadge role={role} />
+          </div>
         )}
       </div>
 
-      <button
-        type="button"
-        disabled={isActive}
-        onClick={() => onSelect(property.propertyId)}
-        className="mt-4 w-full rounded-lg bg-emerald-700 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:bg-emerald-800 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2 disabled:cursor-default disabled:bg-emerald-800/80 disabled:hover:bg-emerald-800/80 disabled:hover:shadow-sm sm:w-auto"
-      >
-        {isActive ? 'Selected' : 'Select property'}
-      </button>
-    </article>
+      <div className="space-y-0.5 p-3.5">
+        <h3 className="truncate text-sm font-semibold text-slate-900 group-hover:text-emerald-900">
+          {property.propertyName}
+        </h3>
+        <p className="truncate text-xs text-slate-500">
+          {property.addressLine1}, {property.city}
+        </p>
+      </div>
+    </button>
   );
 }

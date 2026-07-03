@@ -11,7 +11,6 @@ export {
   Toast,
   ToastContainer,
   PropertyCard,
-  PropertyCardSkeleton,
   PropertyCardSkeletonList,
   EmptyState,
   Pagination,

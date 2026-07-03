@@ -28,7 +28,7 @@ export function resolveFetchUrl(input: RequestInfo | URL): URL {
 
 export async function waitForPropertiesToLoad(): Promise<void> {
   await waitFor(() => {
-    expect(screen.getAllByRole('button', { name: /select property/i }).length).toBeGreaterThan(0);
+    expect(screen.getAllByRole('button', { name: /^select /i }).length).toBeGreaterThan(0);
   });
 }
 

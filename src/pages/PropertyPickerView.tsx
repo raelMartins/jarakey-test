@@ -16,7 +16,7 @@ export function PropertyPickerView() {
     isLoadingProperties,
     propertiesError,
     loadProperties,
-    setActivePropertyId,
+    setActiveProperty,
   } = usePropertyContext();
 
   useEffect(() => {
@@ -32,14 +32,16 @@ export function PropertyPickerView() {
   }
 
   return (
-    <section aria-labelledby="property-picker-heading" className="space-y-6">
-      <header>
-        <h2 id="property-picker-heading" className="text-lg font-semibold text-slate-900">
-          Your properties
-        </h2>
-        <p className="mt-1 text-sm text-slate-500">
-          Select a property to set your active context.
-        </p>
+    <section aria-labelledby="property-picker-heading" className="space-y-4">
+      <header className="flex items-end justify-between gap-4">
+        <div>
+          <h2 id="property-picker-heading" className="text-base font-semibold text-slate-900">
+            Your properties
+          </h2>
+          <p className="mt-0.5 text-xs text-slate-500">
+            {pagination.totalCount} properties · tap a card to activate
+          </p>
+        </div>
       </header>
 
       {isLoadingProperties && <PropertyCardSkeletonList count={pagination.perPage} />}
@@ -69,7 +71,7 @@ export function PropertyPickerView() {
 
       {!isLoadingProperties && !propertiesError && properties.length > 0 && (
         <>
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid grid-cols-2 gap-3">
             {properties.map((property) => (
               <PropertyCard
                 key={property.propertyId}
@@ -78,7 +80,7 @@ export function PropertyPickerView() {
                 role={
                   property.propertyId === activePropertyId ? currentRole : undefined
                 }
-                onSelect={setActivePropertyId}
+                onSelect={setActiveProperty}
               />
             ))}
           </div>

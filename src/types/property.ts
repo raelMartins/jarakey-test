@@ -3,6 +3,7 @@ export interface Property {
   propertyName: string;
   addressLine1: string;
   city: string;
+  imageUrl: string;
 }
 
 export interface PaginatedProperties {

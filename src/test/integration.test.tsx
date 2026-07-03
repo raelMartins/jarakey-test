@@ -29,7 +29,7 @@ describe('integration', () => {
 
     fetchMock.mockClear();
 
-    const selectButtons = screen.getAllByRole('button', { name: /select property/i });
+    const selectButtons = screen.getAllByRole('button', { name: /^select /i });
     await user.click(selectButtons[0]!);
 
     await waitFor(() => {
@@ -63,7 +63,7 @@ describe('integration', () => {
     renderApp();
     await waitForPropertiesToLoad();
 
-    await user.click(screen.getAllByRole('button', { name: /select property/i })[0]!);
+    await user.click(screen.getAllByRole('button', { name: /^select /i })[0]!);
 
     const managerAction = await screen.findByRole('button', {
       name: /perform manager action/i,
@@ -85,7 +85,7 @@ describe('integration', () => {
     const picker = getPropertyPickerRegion();
 
     await waitFor(() => {
-      expect(within(picker).getAllByRole('article')).toHaveLength(10);
+      expect(within(picker).getAllByRole('button', { name: /^select /i })).toHaveLength(10);
     });
   });
 });

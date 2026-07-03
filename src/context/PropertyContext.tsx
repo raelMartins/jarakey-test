@@ -22,6 +22,7 @@ interface PropertyContextValue {
   properties: Property[];
   pagination: PaginationMeta;
   activePropertyId: string | null;
+  activeProperty: Property | null;
   currentRole: Role | null;
   isLoadingProperties: boolean;
   isLoadingRole: boolean;
@@ -30,7 +31,7 @@ interface PropertyContextValue {
   propertiesError: string | null;
   roleError: string | null;
   loadProperties: (page?: number) => Promise<void>;
-  setActivePropertyId: (propertyId: string) => void;
+  setActiveProperty: (property: Property) => void;
   clearActiveProperty: () => void;
   performAction: () => Promise<boolean>;
   downgradeRole: () => Promise<void>;
@@ -57,6 +58,7 @@ export function PropertyProvider({
   const [properties, setProperties] = useState<Property[]>([]);
   const [pagination, setPagination] = useState<PaginationMeta>(DEFAULT_PAGINATION);
   const [activePropertyId, setActivePropertyIdState] = useState<string | null>(null);
+  const [activeProperty, setActivePropertyState] = useState<Property | null>(null);
   const [currentRole, setCurrentRole] = useState<Role | null>(null);
 
   const [isLoadingProperties, setIsLoadingProperties] = useState(false);
@@ -88,17 +90,19 @@ export function PropertyProvider({
     }
   }, [client, showToast]);
 
-  const setActivePropertyId = useCallback((propertyId: string) => {
-    if (activePropertyId === propertyId) {
+  const setActiveProperty = useCallback((property: Property) => {
+    if (activePropertyId === property.propertyId) {
       return;
     }
     setCurrentRole(null);
     setRoleError(null);
-    setActivePropertyIdState(propertyId);
+    setActivePropertyIdState(property.propertyId);
+    setActivePropertyState(property);
   }, [activePropertyId]);
 
   const clearActiveProperty = useCallback(() => {
     setActivePropertyIdState(null);
+    setActivePropertyState(null);
     setCurrentRole(null);
     setRoleError(null);
   }, []);
@@ -216,6 +220,7 @@ export function PropertyProvider({
       properties,
       pagination,
       activePropertyId,
+      activeProperty,
       currentRole,
       isLoadingProperties,
       isLoadingRole,
@@ -224,7 +229,7 @@ export function PropertyProvider({
       propertiesError,
       roleError,
       loadProperties,
-      setActivePropertyId,
+      setActiveProperty,
       clearActiveProperty,
       performAction,
       downgradeRole,
@@ -234,6 +239,7 @@ export function PropertyProvider({
       properties,
       pagination,
       activePropertyId,
+      activeProperty,
       currentRole,
       isLoadingProperties,
       isLoadingRole,
@@ -242,7 +248,7 @@ export function PropertyProvider({
       propertiesError,
       roleError,
       loadProperties,
-      setActivePropertyId,
+      setActiveProperty,
       clearActiveProperty,
       performAction,
       downgradeRole,
