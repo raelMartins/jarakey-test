@@ -26,12 +26,14 @@ interface PropertyContextValue {
   isLoadingProperties: boolean;
   isLoadingRole: boolean;
   isActionLoading: boolean;
+  isDowngrading: boolean;
   propertiesError: string | null;
   roleError: string | null;
   loadProperties: (page?: number) => Promise<void>;
   setActivePropertyId: (propertyId: string) => void;
   clearActiveProperty: () => void;
   performAction: () => Promise<boolean>;
+  downgradeRole: () => Promise<void>;
 }
 
 const DEFAULT_PAGINATION: PaginationMeta = {
@@ -53,6 +55,7 @@ export function PropertyProvider({ children }: { children: ReactNode }) {
   const [isLoadingProperties, setIsLoadingProperties] = useState(false);
   const [isLoadingRole, setIsLoadingRole] = useState(false);
   const [isActionLoading, setIsActionLoading] = useState(false);
+  const [isDowngrading, setIsDowngrading] = useState(false);
 
   const [propertiesError, setPropertiesError] = useState<string | null>(null);
   const [roleError, setRoleError] = useState<string | null>(null);
@@ -158,6 +161,26 @@ export function PropertyProvider({ children }: { children: ReactNode }) {
     }
   }, [activePropertyId, showToast]);
 
+  const downgradeRole = useCallback(async (): Promise<void> => {
+    if (!activePropertyId) {
+      showToast('Select a property before simulating role drift.', 'error');
+      return;
+    }
+
+    setIsDowngrading(true);
+
+    try {
+      const { role } = await apiClient.downgradeRole(activePropertyId);
+      setCurrentRole(role);
+      showToast('Dev: role downgraded to Tenant for the active property.', 'error');
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Downgrade failed';
+      showToast(message, 'error');
+    } finally {
+      setIsDowngrading(false);
+    }
+  }, [activePropertyId, showToast]);
+
   const value = useMemo<PropertyContextValue>(
     () => ({
       properties,
@@ -167,12 +190,14 @@ export function PropertyProvider({ children }: { children: ReactNode }) {
       isLoadingProperties,
       isLoadingRole,
       isActionLoading,
+      isDowngrading,
       propertiesError,
       roleError,
       loadProperties,
       setActivePropertyId,
       clearActiveProperty,
       performAction,
+      downgradeRole,
     }),
     [
       properties,
@@ -182,12 +207,14 @@ export function PropertyProvider({ children }: { children: ReactNode }) {
       isLoadingProperties,
       isLoadingRole,
       isActionLoading,
+      isDowngrading,
       propertiesError,
       roleError,
       loadProperties,
       setActivePropertyId,
       clearActiveProperty,
       performAction,
+      downgradeRole,
     ],
   );
 
