@@ -6,14 +6,7 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-
-export type ToastVariant = 'error' | 'success';
-
-export interface Toast {
-  id: string;
-  message: string;
-  variant: ToastVariant;
-}
+import { ToastContainer, type ToastItem, type ToastVariant } from '../components/ui/Toast';
 
 interface ToastContextValue {
   showToast: (message: string, variant?: ToastVariant) => void;
@@ -24,7 +17,7 @@ const ToastContext = createContext<ToastContextValue | null>(null);
 const TOAST_DURATION_MS = 5000;
 
 export function ToastProvider({ children }: { children: ReactNode }) {
-  const [toasts, setToasts] = useState<Toast[]>([]);
+  const [toasts, setToasts] = useState<ToastItem[]>([]);
 
   const dismissToast = useCallback((id: string) => {
     setToasts((current) => current.filter((toast) => toast.id !== id));
@@ -45,22 +38,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   return (
     <ToastContext.Provider value={value}>
       {children}
-      <div
-        aria-live="polite"
-        className="fixed bottom-4 right-4 z-50 flex flex-col gap-2"
-      >
-        {toasts.map((toast) => (
-          <div
-            key={toast.id}
-            role="alert"
-            className={`rounded-lg px-4 py-3 text-sm text-white shadow-lg transition-opacity ${
-              toast.variant === 'error' ? 'bg-red-600' : 'bg-emerald-600'
-            }`}
-          >
-            {toast.message}
-          </div>
-        ))}
-      </div>
+      <ToastContainer toasts={toasts} onDismiss={dismissToast} />
     </ToastContext.Provider>
   );
 }
@@ -72,3 +50,5 @@ export function useToast(): ToastContextValue {
   }
   return context;
 }
+
+export type { ToastVariant };
